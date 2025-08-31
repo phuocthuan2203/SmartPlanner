@@ -58,6 +58,14 @@ packages/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+# Test outputs
+**/TestResults/
+**/coverage/
+**/*.trx
+**/*.coverage
+**/*.coveragexml
+**/TestCoverage/
+
 # .NET Core
 project.lock.json
 project.fragment.lock.json
