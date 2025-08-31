@@ -1,0 +1,123 @@
+@model SmartPlanner.Application.DTOs.TaskUpdateDTO
+
+@{
+    ViewData["Title"] = "Edit Task";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-lg-flex">
+                        <div>
+                            <h5 class="mb-0">Edit Task</h5>
+                            <p class="text-sm mb-0">Update your task details</p>
+                        </div>
+                        <div class="ms-auto my-auto mt-lg-0 mt-4">
+                            <div class="ms-auto my-auto">
+                                <a href="@Url.Action("Index")" class="btn btn-outline-primary btn-sm mb-0">
+                                    <i class="fas fa-arrow-left"></i>&nbsp;&nbsp;Back to Tasks
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input asp-for="Id" type="hidden" />
+                        <input asp-for="StudentId" type="hidden" />
+                        
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label asp-for="Title" class="form-control-label">Task Title *</label>
+                                    <input asp-for="Title" class="form-control" placeholder="Enter task title" />
+                                    <span asp-validation-for="Title" class="text-danger text-sm"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="SubjectId" class="form-control-label">Subject</label>
+                                    <select asp-for="SubjectId" class="form-control" asp-items="ViewBag.Subjects">
+                                        <option value="">Select a subject (optional)</option>
+                                    </select>
+                                    <span asp-validation-for="SubjectId" class="text-danger text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="Description" class="form-control-label">Description</label>
+                                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter task description (optional)"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Deadline" class="form-control-label">Deadline *</label>
+                                    <input asp-for="Deadline" type="datetime-local" class="form-control" />
+                                    <span asp-validation-for="Deadline" class="text-danger text-sm"></span>
+                                    <small class="form-text text-muted">Select the date and time when this task is due</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="form-check form-switch mt-4">
+                                        <input asp-for="IsDone" class="form-check-input" type="checkbox" id="isDoneSwitch">
+                                        <label class="form-check-label" for="isDoneSwitch">
+                                            Mark as completed
+                                        </label>
+                                    </div>
+                                    <span asp-validation-for="IsDone" class="text-danger text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-end">
+                                    <a href="@Url.Action("Index")" class="btn btn-light me-2">Cancel</a>
+                                    <button type="submit" class="btn bg-gradient-primary">
+                                        <i class="fas fa-save"></i>&nbsp;&nbsp;Update Task
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Format datetime for datetime-local input
+        document.addEventListener('DOMContentLoaded', function() {
+            var deadlineInput = document.querySelector('input[name="Deadline"]');
+            if (deadlineInput && deadlineInput.value) {
+                // Convert the datetime to the correct format for datetime-local input
+                var date = new Date(deadlineInput.value);
+                if (!isNaN(date.getTime())) {
+                    var year = date.getFullYear();
+                    var month = String(date.getMonth() + 1).padStart(2, '0');
+                    var day = String(date.getDate()).padStart(2, '0');
+                    var hours = String(date.getHours()).padStart(2, '0');
+                    var minutes = String(date.getMinutes()).padStart(2, '0');
+                    
+                    deadlineInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+                }
+            }
+        });
+    </script>
+}

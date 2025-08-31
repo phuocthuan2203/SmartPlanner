@@ -1,0 +1,19 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=smartplanner.db",
+    "PostgreSQLConnection": "Host=localhost;Database=your_database_name;Username=your_username;Password=your_password"
+  },
+  "JwtSettings": {
+    "SecretKey": "your-secret-key-here-minimum-32-characters-long",
+    "Issuer": "SmartPlanner",
+    "Audience": "SmartPlannerUsers",
+    "ExpiryMinutes": 60
+  },
+  "AllowedHosts": "*"
+}

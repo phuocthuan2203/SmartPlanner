@@ -1,0 +1,215 @@
+@model SmartPlanner.Application.DTOs.StudentRegisterDTO
+@{
+    ViewData["Title"] = "Register";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
+    <div class="row w-100">
+        <div class="col-md-6 col-lg-5 mx-auto">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus fa-3x text-success mb-3"></i>
+                        <h2 class="card-title text-success fw-bold">Join SmartPlanner</h2>
+                        <p class="text-muted">Create your account to get started</p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage as string))
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            @ViewBag.ErrorMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Register" method="post" id="registerForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label fw-semibold">
+                                <i class="fas fa-user me-2"></i>Full Name
+                            </label>
+                            <input asp-for="FullName" class="form-control form-control-lg"
+                                placeholder="Enter your full name" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold">
+                                <i class="fas fa-envelope me-2"></i>Email Address
+                            </label>
+                            <input asp-for="Email" class="form-control form-control-lg"
+                                placeholder="Enter your email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-semibold">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="Password" type="password" class="form-control form-control-lg"
+                                    placeholder="Create a password" id="passwordInput" />
+                                <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                    <i class="fas fa-eye" id="toggleIcon"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <div class="password-strength mt-2" id="passwordStrength" style="display: none;">
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar" id="strengthBar" role="progressbar" style="width: 0%">
+                                    </div>
+                                </div>
+                                <small class="text-muted" id="strengthText">Password strength</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold">
+                                <i class="fas fa-lock me-2"></i>Confirm Password
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="ConfirmPassword" type="password" class="form-control form-control-lg"
+                                    placeholder="Confirm your password" id="confirmPasswordInput" />
+                                <button type="button" class="btn btn-outline-secondary" id="toggleConfirmPassword">
+                                    <i class="fas fa-eye" id="toggleConfirmIcon"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            <div id="passwordMatch" class="mt-1"></div>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-success btn-lg" id="registerBtn">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center">
+                        <p class="mb-0">Already have an account?
+                            <a asp-action="Login" class="text-success text-decoration-none fw-semibold">Log in here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+<script>
+    // Password toggle functionality
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('passwordInput');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    });
+
+    document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+        const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+        const toggleConfirmIcon = document.getElementById('toggleConfirmIcon');
+
+        if (confirmPasswordInput.type === 'password') {
+            confirmPasswordInput.type = 'text';
+            toggleConfirmIcon.classList.remove('fa-eye');
+            toggleConfirmIcon.classList.add('fa-eye-slash');
+        } else {
+            confirmPasswordInput.type = 'password';
+            toggleConfirmIcon.classList.remove('fa-eye-slash');
+            toggleConfirmIcon.classList.add('fa-eye');
+        }
+    });
+
+    // Password strength indicator
+    document.getElementById('passwordInput').addEventListener('input', function () {
+        const password = this.value;
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+        const strengthContainer = document.getElementById('passwordStrength');
+
+        if (password.length === 0) {
+            strengthContainer.style.display = 'none';
+            return;
+        }
+
+        strengthContainer.style.display = 'block';
+
+        let strength = 0;
+        let strengthLabel = '';
+
+        // Length check
+        if (password.length >= 8) strength += 25;
+
+        // Uppercase check
+        if (/[A-Z]/.test(password)) strength += 25;
+
+        // Lowercase check
+        if (/[a-z]/.test(password)) strength += 25;
+
+        // Number or special character check
+        if (/[\d\W]/.test(password)) strength += 25;
+
+        // Update progress bar
+        strengthBar.style.width = strength + '%';
+
+        if (strength < 50) {
+            strengthBar.className = 'progress-bar bg-danger';
+            strengthLabel = 'Weak';
+        } else if (strength < 75) {
+            strengthBar.className = 'progress-bar bg-warning';
+            strengthLabel = 'Fair';
+        } else if (strength < 100) {
+            strengthBar.className = 'progress-bar bg-info';
+            strengthLabel = 'Good';
+        } else {
+            strengthBar.className = 'progress-bar bg-success';
+            strengthLabel = 'Strong';
+        }
+
+        strengthText.textContent = strengthLabel;
+    });
+
+    // Password confirmation matching
+    function checkPasswordMatch() {
+        const password = document.getElementById('passwordInput').value;
+        const confirmPassword = document.getElementById('confirmPasswordInput').value;
+        const matchDiv = document.getElementById('passwordMatch');
+
+        if (confirmPassword.length === 0) {
+            matchDiv.innerHTML = '';
+            return;
+        }
+
+        if (password === confirmPassword) {
+            matchDiv.innerHTML = '<small class="text-success"><i class="fas fa-check me-1"></i>Passwords match</small>';
+        } else {
+            matchDiv.innerHTML = '<small class="text-danger"><i class="fas fa-times me-1"></i>Passwords do not match</small>';
+        }
+    }
+
+    document.getElementById('passwordInput').addEventListener('input', checkPasswordMatch);
+    document.getElementById('confirmPasswordInput').addEventListener('input', checkPasswordMatch);
+
+    // Form submission loading state
+    document.getElementById('registerForm').addEventListener('submit', function () {
+        const registerBtn = document.getElementById('registerBtn');
+        registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
+        registerBtn.disabled = true;
+    });
+</script>
+}

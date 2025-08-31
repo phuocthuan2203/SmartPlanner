@@ -1,0 +1,65 @@
+@model SmartPlanner.Application.DTOs.SubjectUpdateDTO
+
+@{
+    ViewData["Title"] = "Edit Subject";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <p class="mb-0">Edit Subject</p>
+                        <a href="@Url.Action("Index")" class="btn btn-sm btn-outline-primary ms-auto">
+                            <i class="fas fa-arrow-left"></i>&nbsp;&nbsp;Back to Subjects
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <input asp-for="Id" type="hidden" />
+                        <input asp-for="StudentId" type="hidden" />
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="form-control-label">Subject Name</label>
+                                    <input asp-for="Name" class="form-control" placeholder="Enter subject name" />
+                                    <span asp-validation-for="Name" class="text-danger text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="Description" class="form-control-label">Description (Optional)</label>
+                                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter subject description"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="d-flex justify-content-end">
+                                    <a href="@Url.Action("Index")" class="btn btn-light me-2">Cancel</a>
+                                    <button type="submit" class="btn bg-gradient-primary">
+                                        <i class="fas fa-save"></i>&nbsp;&nbsp;Update Subject
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

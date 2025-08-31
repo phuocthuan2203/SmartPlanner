@@ -1,0 +1,307 @@
+@model SmartPlanner.Application.DTOs.DashboardDTO
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+    <!-- Welcome header with student name -->
+    <div class="dashboard-header mb-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h2 class="card-title mb-2">
+                                    Your Dashboard 📊
+                                </h2>
+                                <p class="card-text mb-0">Welcome back, @ViewBag.StudentName! Ready to tackle your tasks today?</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <!-- Progress Indicator - % tasks completed -->
+                                <div class="progress-overview">
+                                    <h4 class="mb-1">@Model.ProgressPercentage%</h4>
+                                    <small>Tasks Completed</small>
+                                    <div class="progress mt-2" style="height: 8px;">
+                                        <div class="progress-bar bg-light" role="progressbar" 
+                                             style="width: @Model.ProgressPercentage%" 
+                                             aria-valuenow="@Model.ProgressPercentage" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions section -->
+    <div class="quick-actions mb-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-white border-bottom">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-bolt me-2 text-primary"></i>
+                            Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <a href="@Url.Action("Create", "Task")" class="btn btn-primary w-100">
+                                    <i class="fas fa-plus me-2"></i>Create Task
+                                </a>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <a href="@Url.Action("Index", "Task")" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-list me-2"></i>Go to Task List
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Tasks Section -->
+    <div class="today-tasks-section mb-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-white border-bottom">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-calendar-day me-2 text-primary"></i>
+                            Today's Tasks
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        @if (!Model.TodayTasks.Any())
+                        {
+                            <div class="empty-state text-center py-5">
+                                <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No tasks for today. You're all caught up! 🎉</p>
+                                <a href="@Url.Action("Create", "Task")" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Create Your First Task
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var task in Model.TodayTasks)
+                            {
+                                <div class="d-flex align-items-center mb-3 p-3 border rounded @(task.IsOverdue ? "border-danger bg-light" : "")">
+                                    <div class="form-check me-3">
+                                        <input class="form-check-input task-status-toggle" type="checkbox" 
+                                               @(task.IsDone ? "checked" : "") 
+                                               data-task-id="@task.Id" 
+                                               id="today-task-@task.Id">
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 @(task.IsDone ? "text-decoration-line-through text-muted" : "")">@task.Title</h6>
+                                        <small class="text-muted">
+                                            @if (!string.IsNullOrEmpty(task.SubjectName))
+                                            {
+                                                <span class="badge bg-light text-dark me-2">@task.SubjectName</span>
+                                            }
+                                            Due: @task.Deadline.ToString("hh:mm tt")
+                                            @if (!string.IsNullOrEmpty(task.Description))
+                                            {
+                                                <br><span class="text-muted small">@task.Description</span>
+                                            }
+                                        </small>
+                                    </div>
+                                    @if (task.IsOverdue)
+                                    {
+                                        <span class="badge bg-danger">Overdue</span>
+                                    }
+                                    else if (task.IsDone)
+                                    {
+                                        <span class="badge bg-success">Done</span>
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Tasks Section -->
+    <div class="upcoming-tasks-section mb-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-white border-bottom">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-calendar-alt me-2 text-warning"></i>
+                            Upcoming Tasks
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        @if (!Model.UpcomingTasks.Any())
+                        {
+                            <div class="empty-state text-center py-5">
+                                <i class="fas fa-calendar-plus fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No upcoming tasks. Ready to plan your next move?</p>
+                                <a href="@Url.Action("Create", "Task")" class="btn btn-primary">Create Your First Task</a>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var task in Model.UpcomingTasks.Take(10))
+                            {
+                                <div class="d-flex align-items-center mb-3 p-3 border rounded">
+                                    <div class="form-check me-3">
+                                        <input class="form-check-input task-status-toggle" type="checkbox" 
+                                               @(task.IsDone ? "checked" : "") 
+                                               data-task-id="@task.Id" 
+                                               id="upcoming-task-@task.Id">
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 @(task.IsDone ? "text-decoration-line-through text-muted" : "")">@task.Title</h6>
+                                        <small class="text-muted">
+                                            @if (!string.IsNullOrEmpty(task.SubjectName))
+                                            {
+                                                <span class="badge bg-light text-dark me-2">@task.SubjectName</span>
+                                            }
+                                            Due: @task.Deadline.ToString("MMM dd, yyyy hh:mm tt")
+                                            @if (!string.IsNullOrEmpty(task.Description))
+                                            {
+                                                <br><span class="text-muted small">@task.Description</span>
+                                            }
+                                        </small>
+                                    </div>
+                                    @if (task.IsDone)
+                                    {
+                                        <span class="badge bg-success">Done</span>
+                                    }
+                                </div>
+                            }
+                            @if (Model.UpcomingTasks.Count > 10)
+                            {
+                                <div class="text-center mt-3">
+                                    <a href="@Url.Action("Index", "Task")" class="btn btn-outline-primary">
+                                        View All (@Model.UpcomingTasks.Count) Upcoming Tasks
+                                    </a>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Overview -->
+    @if (Model.TotalTasks > 0)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-white border-bottom">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-line me-2 text-success"></i>
+                            Progress Overview
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="text-muted">Overall Progress</h6>
+                                <div class="progress mb-3" style="height: 20px;">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: @Model.ProgressPercentage%" 
+                                         aria-valuenow="@Model.ProgressPercentage" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                        @Model.ProgressPercentage%
+                                    </div>
+                                </div>
+                                <small class="text-muted">@Model.CompletedTasks of @Model.TotalTasks tasks completed</small>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="text-success">
+                                            <i class="fas fa-check-circle fa-2x"></i>
+                                            <h5 class="mt-2">@Model.CompletedTasks</h5>
+                                            <small class="text-muted">Completed</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-warning">
+                                            <i class="fas fa-clock fa-2x"></i>
+                                            <h5 class="mt-2">@(Model.TotalTasks - Model.CompletedTasks)</h5>
+                                            <small class="text-muted">Remaining</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Handle status toggle checkbox changes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add anti-forgery token to the page for AJAX requests
+            if (!document.querySelector('input[name="__RequestVerificationToken"]')) {
+                var form = document.createElement('form');
+                form.style.display = 'none';
+                form.innerHTML = '@Html.AntiForgeryToken()';
+                document.body.appendChild(form);
+            }
+
+            // Add event listeners to all task status toggle checkboxes
+            document.querySelectorAll('.task-status-toggle').forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    var taskId = this.getAttribute('data-task-id');
+                    var isChecked = this.checked;
+                    
+                    // Send AJAX request to mark task as done
+                    fetch('@Url.Action("MarkTaskDone", "Dashboard")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: 'taskId=' + encodeURIComponent(taskId)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update progress indicators without page refresh
+                            setTimeout(function() {
+                                location.reload();
+                            }, 500);
+                        } else {
+                            alert('Error: ' + (data.message || 'Unable to update task status'));
+                            // Revert checkbox state
+                            checkbox.checked = !isChecked;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while updating the task status.');
+                        // Revert checkbox state
+                        checkbox.checked = !isChecked;
+                    });
+                });
+            });
+        });
+    </script>
+}
