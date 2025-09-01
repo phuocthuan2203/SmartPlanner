@@ -112,7 +112,6 @@
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Subject</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Deadline</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Complete</th>
                                         <th class="text-secondary opacity-7">Actions</th>
                                     </tr>
                                 </thead>
@@ -142,23 +141,23 @@
                                                 <span class="text-xs text-secondary">@task.Deadline.ToString("hh:mm tt")</span>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                @if (task.IsDone)
-                                                {
-                                                    <span class="badge badge-sm bg-gradient-success">Completed</span>
-                                                }
-                                                else if (task.IsOverdue)
-                                                {
-                                                    <span class="badge badge-sm bg-gradient-danger">Overdue</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge badge-sm bg-gradient-warning">Pending</span>
-                                                }
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" @(task.IsDone ? "checked" : "") 
-                                                           onchange="toggleTaskStatus('@task.Id')" id="task-@task.Id">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    @if (task.IsDone)
+                                                    {
+                                                        <span class="badge badge-sm bg-gradient-success mb-2">Completed</span>
+                                                    }
+                                                    else if (task.IsOverdue)
+                                                    {
+                                                        <span class="badge badge-sm bg-gradient-danger mb-2">Overdue</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge badge-sm bg-gradient-warning mb-2">Pending</span>
+                                                    }
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" @(task.IsDone ? "checked" : "") 
+                                                               onchange="toggleTaskStatus('@task.Id')" id="task-@task.Id">
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td class="align-middle">
