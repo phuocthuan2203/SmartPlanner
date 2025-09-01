@@ -6,6 +6,11 @@ using SmartPlanner.Application.Services.Interfaces;
 using SmartPlanner.Infrastructure.Data;
 using SmartPlanner.Infrastructure.Security;
 using System.Text;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +19,15 @@ builder.Services.AddControllersWithViews();
 
 // Configure Entity Framework
 builder.Services.AddDbContext<SmartPlannerDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    {
+        var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+        options.UseNpgsql(conn);
+    });
+
+// Persist DataProtection keys (for stable auth/antiforgery/session cookies across restarts)
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("/var/lib/smartplanner-keys"))
+    .SetApplicationName("SmartPlanner");
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
@@ -57,8 +70,32 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(60);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // ensure Secure over HTTPS
 });
 var app = builder.Build();
+
+//Trust proxy headers from Nginx and set original scheme/IP before HSTS/HTTPS
+var forwardedOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+forwardedOptions.KnownNetworks.Clear();
+forwardedOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedOptions);
+
+// Auto-apply EF Core migrations in Production on startup
+if (app.Environment.IsProduction())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<SmartPlannerDbContext>();
+    try { db.Database.Migrate(); }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Database migration failed on startup");
+        throw; // fail fast so systemd restarts the service
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
