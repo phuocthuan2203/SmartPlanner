@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartPlanner.Tests.Unit", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartPlanner.Tests.Integration", "tests\SmartPlanner.Tests.Integration\SmartPlanner.Tests.Integration.csproj", "{F2A30468-B402-47B2-A698-92239B9CB8EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartPlanner.Tests.Performance", "tests\SmartPlanner.Tests.Performance\SmartPlanner.Tests.Performance.csproj", "{80B5CC09-F38D-4549-914A-6150F5B4F7AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartPlanner.Tests.Security", "tests\SmartPlanner.Tests.Security\SmartPlanner.Tests.Security.csproj", "{12F8DD85-C3F1-4503-BE7E-8191E9D64CFD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,9 +36,19 @@ Global
 		{F2A30468-B402-47B2-A698-92239B9CB8EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2A30468-B402-47B2-A698-92239B9CB8EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2A30468-B402-47B2-A698-92239B9CB8EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80B5CC09-F38D-4549-914A-6150F5B4F7AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80B5CC09-F38D-4549-914A-6150F5B4F7AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80B5CC09-F38D-4549-914A-6150F5B4F7AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80B5CC09-F38D-4549-914A-6150F5B4F7AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12F8DD85-C3F1-4503-BE7E-8191E9D64CFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12F8DD85-C3F1-4503-BE7E-8191E9D64CFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12F8DD85-C3F1-4503-BE7E-8191E9D64CFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12F8DD85-C3F1-4503-BE7E-8191E9D64CFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A794C44D-8E8C-4739-9A6B-76B4143F01F0} = {8CCD91C1-9E01-4641-A43C-CBCDC21AFC0B}
 		{F2A30468-B402-47B2-A698-92239B9CB8EF} = {8CCD91C1-9E01-4641-A43C-CBCDC21AFC0B}
+		{80B5CC09-F38D-4549-914A-6150F5B4F7AB} = {8CCD91C1-9E01-4641-A43C-CBCDC21AFC0B}
+		{12F8DD85-C3F1-4503-BE7E-8191E9D64CFD} = {8CCD91C1-9E01-4641-A43C-CBCDC21AFC0B}
 	EndGlobalSection
 EndGlobal
