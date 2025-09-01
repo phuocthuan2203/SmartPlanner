@@ -1,0 +1,74 @@
+# ZAP Scanning Rules Configuration
+# Format: RULE_ID	THRESHOLD	STRENGTH	DESCRIPTION
+
+# High Priority Security Rules
+10021	LOW	HIGH	X-Content-Type-Options Header Missing
+10020	LOW	HIGH	X-Frame-Options Header Missing
+10016	LOW	HIGH	Web Browser XSS Protection Not Enabled
+10017	LOW	HIGH	Cross-Domain JavaScript Source File Inclusion
+10019	LOW	HIGH	Content-Type Header Missing
+10027	LOW	HIGH	Information Disclosure - Suspicious Comments
+10028	LOW	HIGH	Open Redirect
+10032	LOW	HIGH	Viewstate Scanner
+10040	LOW	HIGH	Secure Pages Include Mixed Content
+10041	LOW	HIGH	HTTP to HTTPS Insecure Transition in Form Post
+10042	LOW	HIGH	HTTPS to HTTP Insecure Transition in Form Post
+10043	LOW	HIGH	User Controllable JavaScript Event (XSS)
+10044	LOW	HIGH	User Controllable HTML Element Attribute (Potential XSS)
+10045	LOW	HIGH	Source Code Disclosure - /WEB-INF folder
+10047	LOW	HIGH	HTTPS Content Available via HTTP
+10048	LOW	HIGH	Remote Code Execution - Shell Shock
+10049	LOW	HIGH	Content Cacheability
+10050	LOW	HIGH	Retrieved from Cache
+10051	LOW	HIGH	Relative Path Confusion
+10052	LOW	HIGH	X-ChromeLogger-Data (XCOLD) Header Information Leak
+10054	LOW	HIGH	Cookie Without SameSite Attribute
+10055	LOW	HIGH	CSP Scanner
+10056	LOW	HIGH	X-Debug-Token Information Leak
+10057	LOW	HIGH	Username Hash Found
+10061	LOW	HIGH	X-AspNet-Version Response Header
+10062	LOW	HIGH	PII Disclosure
+10063	LOW	HIGH	Feature Policy Header Not Set
+10096	LOW	HIGH	Timestamp Disclosure
+10097	LOW	HIGH	Hash Disclosure
+10098	LOW	HIGH	Cross-Domain Misconfiguration
+10099	LOW	HIGH	Source Code Disclosure
+
+# Authentication and Session Management
+40003	LOW	HIGH	CRLF Injection
+40008	LOW	HIGH	Parameter Tampering
+40009	LOW	HIGH	Server Side Include
+40012	LOW	HIGH	Cross Site Scripting (Reflected)
+40013	LOW	HIGH	Session Fixation
+40014	LOW	HIGH	Cross Site Scripting (Persistent)
+40016	LOW	HIGH	Cross Site Scripting (Persistent) - Prime
+40017	LOW	HIGH	Cross Site Scripting (Persistent) - Spider
+40018	LOW	HIGH	SQL Injection
+40019	LOW	HIGH	SQL Injection - MySQL
+40020	LOW	HIGH	SQL Injection - Hypersonic SQL
+40021	LOW	HIGH	SQL Injection - Oracle
+40022	LOW	HIGH	SQL Injection - PostgreSQL
+40023	LOW	HIGH	Possible Username Enumeration
+40024	LOW	HIGH	SQL Injection - SQLite
+40025	LOW	HIGH	Proxy Disclosure
+40026	LOW	HIGH	Cross Site Scripting (DOM Based)
+40027	LOW	HIGH	SQL Injection - MsSQL
+40028	LOW	HIGH	LDAP Injection
+40029	LOW	HIGH	XPATH Injection
+
+# Input Validation
+90001	LOW	HIGH	Insecure JSF ViewState
+90011	LOW	HIGH	Charset Mismatch
+90017	LOW	HIGH	XSLT Injection
+90019	LOW	HIGH	Server Side Code Injection
+90020	LOW	HIGH	Remote OS Command Injection
+90021	LOW	HIGH	XPath Injection
+90022	LOW	HIGH	Application Error Disclosure
+90023	LOW	HIGH	XML External Entity Attack
+90024	LOW	HIGH	Generic Padding Oracle
+90025	LOW	HIGH	Expression Language Injection
+90026	LOW	HIGH	SOAP Action Spoofing
+90027	LOW	HIGH	Cookie Slack Detector
+90028	LOW	HIGH	Insecure Authentication
+90029	LOW	HIGH	LDAP Injection
+90030	LOW	HIGH	WSDL File Detection

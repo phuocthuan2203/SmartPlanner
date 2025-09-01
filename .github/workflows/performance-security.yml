@@ -1,0 +1,174 @@
+name: Performance & Security Tests
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Nightly runs at 2 AM UTC
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  performance-tests:
+    runs-on: ubuntu-latest
+    name: Performance Testing
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+      
+    - name: Run Performance Tests
+      run: dotnet test tests/SmartPlanner.Tests.Performance/ --configuration Release --logger trx --results-directory TestResults/Performance
+      continue-on-error: true
+      
+    - name: Run Database Benchmarks
+      run: dotnet run --project tests/SmartPlanner.Tests.Performance/ --configuration Release
+      continue-on-error: true
+      
+    - name: Upload Performance Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: performance-test-results
+        path: |
+          TestResults/Performance/
+          BenchmarkDotNet.Artifacts/
+          load-test-results/
+          stress-test-results/
+        retention-days: 30
+
+  security-tests:
+    runs-on: ubuntu-latest
+    name: Security Testing
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+      
+    - name: Run Security Tests
+      run: dotnet test tests/SmartPlanner.Tests.Security/ --configuration Release --logger trx --results-directory TestResults/Security
+      
+    - name: Upload Security Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-test-results
+        path: TestResults/Security/
+        retention-days: 30
+
+  owasp-zap-scan:
+    runs-on: ubuntu-latest
+    name: OWASP ZAP Security Scan
+    needs: [security-tests]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Build and Start Application
+      run: |
+        dotnet build --configuration Release
+        dotnet run --project src/SmartPlanner.csproj --configuration Release &
+        sleep 30  # Wait for app to start
+        
+    - name: Run OWASP ZAP Baseline Scan
+      uses: zaproxy/action-baseline@v0.12.0
+      with:
+        target: 'http://localhost:5000'
+        rules_file_name: '.zap/rules.tsv'
+        cmd_options: '-a'
+        
+    - name: Upload ZAP Scan Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: zap-scan-results
+        path: report_html.html
+        retention-days: 30
+
+  test-summary:
+    runs-on: ubuntu-latest
+    name: Test Summary
+    needs: [performance-tests, security-tests, owasp-zap-scan]
+    if: always()
+    
+    steps:
+    - name: Download Performance Results
+      uses: actions/download-artifact@v4
+      with:
+        name: performance-test-results
+        path: performance-results/
+      continue-on-error: true
+        
+    - name: Download Security Results
+      uses: actions/download-artifact@v4
+      with:
+        name: security-test-results
+        path: security-results/
+      continue-on-error: true
+        
+    - name: Download ZAP Results
+      uses: actions/download-artifact@v4
+      with:
+        name: zap-scan-results
+        path: zap-results/
+      continue-on-error: true
+        
+    - name: Generate Summary Report
+      run: |
+        echo "# Performance & Security Test Summary" > test-summary.md
+        echo "" >> test-summary.md
+        echo "## Performance Tests" >> test-summary.md
+        if [ -d "performance-results" ]; then
+          echo "✅ Performance tests completed" >> test-summary.md
+          find performance-results -name "*.trx" -exec echo "- {}" \; >> test-summary.md
+        else
+          echo "❌ Performance tests failed or not found" >> test-summary.md
+        fi
+        echo "" >> test-summary.md
+        echo "## Security Tests" >> test-summary.md
+        if [ -d "security-results" ]; then
+          echo "✅ Security tests completed" >> test-summary.md
+          find security-results -name "*.trx" -exec echo "- {}" \; >> test-summary.md
+        else
+          echo "❌ Security tests failed or not found" >> test-summary.md
+        fi
+        echo "" >> test-summary.md
+        echo "## OWASP ZAP Scan" >> test-summary.md
+        if [ -f "zap-results/report_html.html" ]; then
+          echo "✅ ZAP security scan completed" >> test-summary.md
+        else
+          echo "❌ ZAP security scan failed or not found" >> test-summary.md
+        fi
+        
+    - name: Upload Summary Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-summary-report
+        path: test-summary.md
+        retention-days: 30
