@@ -20,7 +20,23 @@ namespace SmartPlanner.Application.Services
         public async Task<IEnumerable<SubjectDTO>> GetSubjectsByStudentAsync(Guid studentId)
         {
             var subjects = await _subjectRepository.GetByStudentIdAsync(studentId);
-            return _mapper.Map<IEnumerable<SubjectDTO>>(subjects);
+            var subjectDTOs = new List<SubjectDTO>();
+            
+            foreach (var subject in subjects)
+            {
+                var subjectDTO = _mapper.Map<SubjectDTO>(subject);
+                
+                // Get top 5 tasks ordered by completion status and deadline
+                var orderedTasks = subject.Tasks
+                    .OrderBy(t => t.IsDone)
+                    .ThenBy(t => t.Deadline)
+                    .Take(5);
+                
+                subjectDTO.Tasks = _mapper.Map<ICollection<SubjectTaskSummaryDTO>>(orderedTasks);
+                subjectDTOs.Add(subjectDTO);
+            }
+            
+            return subjectDTOs;
         }
 
         public async Task<SubjectDTO?> GetSubjectByIdAsync(Guid subjectId, Guid studentId)

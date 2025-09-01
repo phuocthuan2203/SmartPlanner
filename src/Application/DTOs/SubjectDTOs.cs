@@ -45,5 +45,14 @@ namespace SmartPlanner.Application.DTOs
         public DateTime UpdatedAt { get; set; }
         public int TaskCount { get; set; }
         public int CompletedTaskCount { get; set; }
+        public ICollection<SubjectTaskSummaryDTO> Tasks { get; set; } = new List<SubjectTaskSummaryDTO>();
+    }
+
+    public class SubjectTaskSummaryDTO
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public bool IsDone { get; set; }
+        public DateTime Deadline { get; set; }
     }
 }

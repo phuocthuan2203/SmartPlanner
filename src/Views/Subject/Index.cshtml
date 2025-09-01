@@ -70,7 +70,49 @@
                                                 </p>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <span class="badge badge-sm bg-gradient-info">@subject.TaskCount tasks</span>
+                                                @if (subject.Tasks.Any())
+                                                {
+                                                    <div class="task-list-preview">
+                                                        @foreach (var task in subject.Tasks)
+                                                        {
+                                                            <div class="task-item d-flex align-items-center mb-1">
+                                                                @if (task.IsDone)
+                                                                {
+                                                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                                                    <span class="text-decoration-line-through text-muted text-xs">@task.Title</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    @if (task.Deadline < DateTime.Now)
+                                                                    {
+                                                                        <i class="fas fa-exclamation-circle text-danger me-2"></i>
+                                                                        <span class="text-danger text-xs fw-bold">@task.Title</span>
+                                                                    }
+                                                                    else if (task.Deadline <= DateTime.Now.AddDays(3))
+                                                                    {
+                                                                        <i class="fas fa-clock text-warning me-2"></i>
+                                                                        <span class="text-warning text-xs">@task.Title</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <i class="fas fa-circle text-secondary me-2" style="font-size: 0.5rem;"></i>
+                                                                        <span class="text-secondary text-xs">@task.Title</span>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        }
+                                                        @if (subject.TaskCount > 5)
+                                                        {
+                                                            <div class="text-xs text-muted mt-1">
+                                                                <i class="fas fa-ellipsis-h"></i> +@(subject.TaskCount - 5) more tasks
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-secondary text-xs">No tasks</span>
+                                                }
                                             </td>
                                             <td class="align-middle text-center">
                                                 @if (subject.TaskCount > 0)
@@ -149,6 +191,32 @@
 </div>
 
 @section Scripts {
+    <style>
+        .task-list-preview {
+            max-width: 200px;
+            margin: 0 auto;
+        }
+        
+        .task-item {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        
+        .task-item span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: calc(100% - 20px);
+            display: inline-block;
+        }
+        
+        .task-item i {
+            flex-shrink: 0;
+        }
+    </style>
+    
     <script>
         let subjectIdToDelete = null;
 

@@ -28,7 +28,10 @@ namespace SmartPlanner.Application.Mappers
             // Subject mappings
             CreateMap<Subject, SubjectDTO>()
                 .ForMember(dest => dest.TaskCount, opt => opt.MapFrom(src => src.Tasks.Count))
-                .ForMember(dest => dest.CompletedTaskCount, opt => opt.MapFrom(src => src.Tasks.Count(t => t.IsDone)));
+                .ForMember(dest => dest.CompletedTaskCount, opt => opt.MapFrom(src => src.Tasks.Count(t => t.IsDone)))
+                .ForMember(dest => dest.Tasks, opt => opt.MapFrom(src => src.Tasks));
+
+            CreateMap<Domain.Entities.Task, SubjectTaskSummaryDTO>();
 
             CreateMap<SubjectCreateDTO, Subject>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
