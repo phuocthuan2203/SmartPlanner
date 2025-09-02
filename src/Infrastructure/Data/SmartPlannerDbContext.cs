@@ -21,7 +21,7 @@ namespace SmartPlanner.Infrastructure.Data
             modelBuilder.Entity<StudentAccount>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasDefaultValueSql("lower(hex(randomblob(16)))");
+                entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
                 entity.Property(e => e.Email).HasMaxLength(320).IsRequired();
                 entity.HasIndex(e => e.Email).IsUnique();
                 entity.Property(e => e.FullName).HasMaxLength(100).IsRequired();
@@ -34,7 +34,7 @@ namespace SmartPlanner.Infrastructure.Data
             modelBuilder.Entity<Subject>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasDefaultValueSql("lower(hex(randomblob(16)))");
+                entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
                 entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.UpdatedAt).IsRequired();
@@ -53,7 +53,7 @@ namespace SmartPlanner.Infrastructure.Data
             modelBuilder.Entity<Domain.Entities.Task>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasDefaultValueSql("lower(hex(randomblob(16)))");
+                entity.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
                 entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
                 entity.Property(e => e.Deadline).IsRequired();
                 entity.Property(e => e.IsDone).IsRequired().HasDefaultValue(false);

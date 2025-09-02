@@ -1,0 +1,19 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Database=smartplanner;Username=smartplanner;Password=your-password-here"
+  },
+  "JwtSettings": {
+    "SecretKey": "your-super-secret-jwt-key-at-least-32-characters-long",
+    "Issuer": "SmartPlanner",
+    "Audience": "SmartPlannerUsers",
+    "ExpiryMinutes": 60
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}
